@@ -1,0 +1,71 @@
+﻿@page "/Laptop-editar/{NumeroSerie}"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+
+<h3>Editar_laptop</h3>
+
+<EditForm Model="@laptop" OnValidSubmit="@Guardar">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Numero de serie">Numero de serie</label>
+        <InputText id="NumeroSerie" @bind-Value="laptop.NumeroSerie" class="form-control" />
+
+    </div>
+    <div class="form-group">
+        <label for="Marca">Marca del dispositivo</label>
+        <InputText id="Marca" @bind-Value="laptop.Marca" class="form-control" />
+
+    </div>
+    <div class="form-group">
+        <label for="Modelo">Modelo del dispositivo</label>
+        <InputText id="Modelo" @bind-Value="laptop.Modelo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Memoria Ram">Memoria RAM de la laptop</label>
+        <InputText id="MemoriaRam" @bind-Value="laptop.MemoriaRam" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Almacenamiento">Almacenamiento de la laptop</label>
+        <InputText id="Almacenamiento" @bind-Value="laptop.Almacenamiento" class="form-control" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</EditForm>
+
+
+
+
+
+
+
+@code {
+    [Parameter]
+    public string NumeroSerie { get; set; }
+
+    private Laptop laptop = new Laptop();
+    List<Laptop> laptops = new List<Laptop>();
+
+    protected async Task Guardar()
+    {
+
+        await localStorage.SetItemAsync("laptop", laptops);
+
+        //Al finalizar de guardar regresamos al formulario original
+        NavigationManager.NavigateTo("/");
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        laptops = await localStorage.GetItemAsync<List<Laptop>>("laptop");
+
+
+        laptop = laptops.Find(c => c.NumeroSerie == NumeroSerie);
+
+    }
+}
